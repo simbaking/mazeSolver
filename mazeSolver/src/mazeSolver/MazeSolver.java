@@ -1,15 +1,19 @@
 package mazeSolver;
 
 import java.util.*;
+import java.awt.*;
+import javax.swing.*;
 
-public class MazeSolver {
+public class MazeSolver extends JPanel{
 	
 	public static int[][] maze = {
-			{0, 0, 0, 0, 0},
-			{0, 1, 0, 3, 0},
-			{0, 2, 0, 2, 0},
-			{0, 2, 2, 2, 0},
-			{0, 0, 0, 0, 0}
+			{0, 0, 0, 0, 0, 0, 0},
+			{0, 1, 0, 2, 0, 3, 0},
+			{0, 2, 0, 2, 0, 2, 0},
+			{0, 2, 0, 2, 0, 2, 0},
+			{0, 2, 0, 2, 0, 2, 0},
+			{0, 2, 2, 2, 2, 2, 0},
+			{0, 0, 0, 0, 0, 0, 0}
 	};// 0 = wall or already explored, 1 = start, 2 = empty, 3 = end, 4 = path walked
 	
 	public static int[][] mazePath;
@@ -37,6 +41,10 @@ public class MazeSolver {
 		
 		solve(mazePath, start, path);
 
+		
+		drawMaze(mazePath);
+		
+		
 		for(int i = 0; i < maze.length; i++) {
 			
 			for(int j = 0; j < maze[i].length; j++) {
@@ -248,13 +256,13 @@ public class MazeSolver {
 		else if(numOfOpenEdges(maze, start[0], start[1]) == 1 && path.get(0) != start){
 			
 			maze[start[0]][start[1]] = 0;
-			int[] backPath = path.get(0/*path.size() - 1*/);
+			int[] backPath = path.get(path.size() - 1);
 			path.remove(path.size() - 1);
 			solve(maze, backPath, path);
 			
 		}
 
-		else if(numOfOpenEdges(maze, start[0], start[1]) == 2 || path.get(0) == start) {
+		else if(numOfOpenEdges(maze, start[0], start[1]) >= 2 || path.get(0) == start) {
 			
 			for(int i = -1; i < 2; i++) {
 				
@@ -292,6 +300,35 @@ public class MazeSolver {
 			
 		}
 		
+	}
+	// todo fix
+	public void drawMaze(int[][] maze, Graphics g) {
+		
+		JFrame frame = new JFrame("Maze");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(this);
+        frame.setSize(300, 200);
+        frame.setLocationRelativeTo(null); // Center the frame
+        frame.setVisible(true);
+		
+	}
+	
+	public void paintComponent(Graphics g) {
+
+		super.paintComponent(g);
+		
+		int x = 50;
+        int y = 50;
+        int width = 100;
+        int height = 70;
+        int borderWidth = 3;
+        
+        g.setColor(Color.BLACK); // Set border color
+        g.fillRect(x, y, width, height);
+		
+        g.setColor(Color.BLUE); // Set fill color
+        g.fillRect(x + borderWidth, y + borderWidth, width - (2 * borderWidth), height - (2 * borderWidth));
+        
 	}
 	
 }
