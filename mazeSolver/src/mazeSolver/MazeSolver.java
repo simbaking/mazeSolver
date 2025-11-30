@@ -2,19 +2,24 @@ package mazeSolver;
 
 import java.util.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import javax.swing.*;
 
-public class MazeSolver extends JPanel{
+public class MazeSolver {
 	
-	public static int[][] maze = {
+	public static int[][] maze;
+	
+	/*public static int[][] maze = {
 			{0, 0, 0, 0, 0, 0, 0},
 			{0, 1, 0, 2, 0, 3, 0},
 			{0, 2, 0, 2, 0, 2, 0},
-			{0, 2, 0, 2, 0, 2, 0},
+			{0, 2, 0, 2, 0, 2, 0},     //example
 			{0, 2, 0, 2, 0, 2, 0},
 			{0, 2, 2, 2, 2, 2, 0},
 			{0, 0, 0, 0, 0, 0, 0}
-	};// 0 = wall or already explored, 1 = start, 2 = empty, 3 = end, 4 = path walked
+	};*/                               // 0 = wall or already explored, 1 = start, 2 = empty, 3 = end, 4 = path walked
 	
 	public static int[][] mazePath;
 	public static int[][] solvedMazePath;
@@ -23,9 +28,69 @@ public class MazeSolver extends JPanel{
 	public static int RIGHT = 2;
 	public static int UP = 3;
 	public static int LEFT = 4;
+	
+
+	public static UI mazePathUI = new UI();
 
 	public static void main(String[] args) {
 
+		
+		Scanner getMazeScanner = new Scanner(System.in);
+		int mazeWidth = 0;
+		int mazeHeight = 0;
+		
+		System.out.println("Please type in the location of your .txt that will represent your maze");
+		// 0 = wall or already explored, 1 = start, 2 = empty, 3 = end, 4 = path walked
+		String mazeLocation = getMazeScanner.next();
+		
+		try (Scanner scanner = new Scanner(new File(mazeLocation))) {
+
+			Scanner getWidthScanner = new Scanner(new File(mazeLocation));
+			mazeWidth = getWidthScanner.nextLine().length();
+			getWidthScanner.close();
+
+			Scanner getHeightScanner = new Scanner(new File(mazeLocation));
+			mazeHeight = 0;
+			
+			while(getHeightScanner.hasNextLine()) {
+				
+				getHeightScanner.nextLine();
+				mazeHeight ++;
+				
+			}
+			
+			getHeightScanner.close();
+			
+			
+        } catch (FileNotFoundException e) {
+            System.err.println("maze size not recieved");
+        }
+		
+		
+		maze = new int[mazeHeight][mazeWidth];
+		
+		try (Scanner scanner = new Scanner(new File(mazeLocation))) {
+			
+			int lineNumber = 0;
+			
+            while (scanner.hasNextLine()) {
+            	
+            	String line = scanner.nextLine();
+                		
+                for(int j = 0; j < mazeWidth; j++) {
+                	
+                	maze[lineNumber][j] = Character.getNumericValue(line.charAt(j));
+                	
+                }
+                
+                lineNumber ++;
+                
+            }
+            
+        } catch (FileNotFoundException e) {
+        	System.err.println("maze not initialized");
+        }
+		
 		
 		mazePath = new int[maze.length][maze[0].length];
 		
@@ -39,10 +104,11 @@ public class MazeSolver extends JPanel{
 		ArrayList<int[]> path = new ArrayList<int[]>();
 		path.add(start);
 		
+		mazePathUI.show(mazePath);
 		solve(mazePath, start, path);
 
 		
-		drawMaze(mazePath);
+		//drawMaze(mazePath);
 		
 		
 		for(int i = 0; i < maze.length; i++) {
@@ -77,6 +143,11 @@ public class MazeSolver extends JPanel{
 			
 		}
 		
+		for(int i = 0; i < path.size(); i++) {
+			System.out.println("x: " + path.get(i)[1] + " y: " + path.get(i)[0]);
+		}
+		
+		getMazeScanner.close();
 
 	}
 
@@ -93,7 +164,8 @@ public class MazeSolver extends JPanel{
 					if(xCoordinate + i >= 0 && yCoordinate + j >= 0 &&
 							xCoordinate + i <= maze.length && yCoordinate + j <= maze[xCoordinate + i].length) {
 						
-						if(maze[xCoordinate + i][yCoordinate + j] != 0) {
+						if(maze[xCoordinate + i][yCoordinate + j] != 0 && maze[xCoordinate + i][yCoordinate + j] != 1 &&
+								maze[xCoordinate + i][yCoordinate + j] != 4) {
 							openEdges ++;
 						}
 						
@@ -112,25 +184,29 @@ public class MazeSolver extends JPanel{
 	public static boolean edgeIsOpen(int[][] maze, int xCoordinate, int yCoordinate, int direction) {
 				
 		if(direction == DOWN) {
-			if(maze[xCoordinate + 1][yCoordinate] != 0) {
+			if(maze[xCoordinate + 1][yCoordinate] != 0 && maze[xCoordinate + 1][yCoordinate] != 1 &&
+					maze[xCoordinate + 1][yCoordinate] != 4) {
 				return true;
 			}
 		}
 		
 		else if(direction == RIGHT) {
-			if(maze[xCoordinate][yCoordinate + 1] != 0) {
+			if(maze[xCoordinate][yCoordinate + 1] != 0 && maze[xCoordinate][yCoordinate + 1] != 1 &&
+					maze[xCoordinate][yCoordinate + 1] != 4) {
 				return true;
 			}
 		}
 		
 		else if(direction == UP) {
-			if(maze[xCoordinate - 1][yCoordinate] != 0) {
+			if(maze[xCoordinate - 1][yCoordinate] != 0 && maze[xCoordinate - 1][yCoordinate] != 1 &&
+					maze[xCoordinate - 1][yCoordinate] != 4) {
 				return true;
 			}
 		}
 		
 		else if(direction == LEFT) {
-			if(maze[xCoordinate][yCoordinate - 1] != 0) {
+			if(maze[xCoordinate][yCoordinate - 1] != 0 && maze[xCoordinate][yCoordinate - 1] != 1 &&
+					maze[xCoordinate][yCoordinate - 1] != 4) {
 				return true;
 			}
 		}
@@ -247,26 +323,23 @@ public class MazeSolver extends JPanel{
 	
 	public static void solve(int[][] maze, int[] start, ArrayList<int[]> path) {
 		
-		if(start[0] == getEnd(maze)[0] && start[1] == getEnd(maze)[1]) {
-			
-			path.add(start);
-			
+		mazePathUI.show(mazePath, MazeSolver.maze);
+		
+		try {
+		    // Pause for 1 second (1000 milliseconds)
+		    Thread.sleep(5000 / (maze.length * maze[0].length)); 
+		} catch (InterruptedException e) {
+		    // Handle the interruption if the thread is interrupted while sleeping
+		    Thread.currentThread().interrupt(); 
 		}
 		
-		else if(numOfOpenEdges(maze, start[0], start[1]) == 1 && path.get(0) != start){
+		if(path.size() == 0){
 			
-			maze[start[0]][start[1]] = 0;
-			int[] backPath = path.get(path.size() - 1);
-			path.remove(path.size() - 1);
-			solve(maze, backPath, path);
-			
-		}
+			path.add(start);
 
-		else if(numOfOpenEdges(maze, start[0], start[1]) >= 2 || path.get(0) == start) {
-			
-			for(int i = -1; i < 2; i++) {
+			for(int i = -1; i <= 1; i++) {
 				
-				for(int j = -1; j < 2; j++) {
+				for(int j = -1; j <= 1; j++) {
 					
 					if(Math.abs(i) + Math.abs(j) == 1) {
 						
@@ -279,7 +352,6 @@ public class MazeSolver extends JPanel{
 							
 							if(maze[start[0] + i][start[1] + j] != 0 &&
 									(!path.stream().anyMatch(p -> p[0] == pathForward[0] && p[1] == pathForward[1]))) {
-								
 								
 								path.add(pathForward);
 								if(maze[start[0]][start[1]] != 1) {
@@ -300,35 +372,58 @@ public class MazeSolver extends JPanel{
 			
 		}
 		
-	}
-	// todo fix
-	public void drawMaze(int[][] maze, Graphics g) {
+		else if(start[0] == getEnd(maze)[0] && start[1] == getEnd(maze)[1]) {
+			
+			path.add(start);
+			
+		}
 		
-		JFrame frame = new JFrame("Maze");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(this);
-        frame.setSize(300, 200);
-        frame.setLocationRelativeTo(null); // Center the frame
-        frame.setVisible(true);
-		
-	}
-	
-	public void paintComponent(Graphics g) {
+		else if(numOfOpenEdges(maze, start[0], start[1]) == 0 ){
+			
+			maze[start[0]][start[1]] = 0;
+			int[] backPath = path.get(path.size() - 2);
+			path.remove(path.size() - 1);
+			solve(maze, backPath, path);
+			
+		}
 
-		super.paintComponent(g);
+		else if(numOfOpenEdges(maze, start[0], start[1]) >= 1 ) {
+			
+			for(int i = -1; i <= 1; i++) {
+				
+				for(int j = -1; j <= 1; j++) {
+					
+					if(Math.abs(i) + Math.abs(j) == 1) {
+						
+						if(start[0] + i >= 0 && start[1] + j >= 0 &&
+								start[0] + i <= maze.length && start[1] + j <= maze[start[0] + i].length) {
+							
+							int[] pathForward = new int[2];
+							pathForward[0] = start[0] + i;
+							pathForward[1] = start[1] + j;
+							
+							if(maze[start[0] + i][start[1] + j] != 0 &&
+									(!path.stream().anyMatch(p -> p[0] == pathForward[0] && p[1] == pathForward[1]))) {
+								
+								path.add(pathForward);
+								if(maze[start[0]][start[1]] != 1) {
+									maze[start[0]][start[1]] = 4;
+								}
+								
+								solve(maze, pathForward, path);
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+				
+			}
+			
+		}
 		
-		int x = 50;
-        int y = 50;
-        int width = 100;
-        int height = 70;
-        int borderWidth = 3;
-        
-        g.setColor(Color.BLACK); // Set border color
-        g.fillRect(x, y, width, height);
-		
-        g.setColor(Color.BLUE); // Set fill color
-        g.fillRect(x + borderWidth, y + borderWidth, width - (2 * borderWidth), height - (2 * borderWidth));
-        
 	}
 	
 }
