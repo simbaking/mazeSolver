@@ -106,10 +106,6 @@ public class MazeSolver {
 		
 		mazePathUI.show(mazePath);
 		solve(mazePath, start, path);
-
-		
-		//drawMaze(mazePath);
-		
 		
 		for(int i = 0; i < maze.length; i++) {
 			
@@ -326,14 +322,17 @@ public class MazeSolver {
 		mazePathUI.show(mazePath, MazeSolver.maze);
 		
 		try {
-		    // Pause for 1 second (1000 milliseconds)
 		    Thread.sleep(5000 / (maze.length * maze[0].length)); 
-		} catch (InterruptedException e) {
-		    // Handle the interruption if the thread is interrupted while sleeping
-		    Thread.currentThread().interrupt(); 
+		} 
+		catch (InterruptedException e) {
+			Thread.currentThread().interrupt(); 
 		}
 		
-		if(path.size() == 0){
+		/*if(path.getLast()[0] == getEnd(maze)[0] && path.getLast()[1] == getEnd(maze)[1]) {
+			
+		}
+		
+		else */if(path.size() == 0){
 			
 			path.add(start);
 
@@ -373,9 +372,7 @@ public class MazeSolver {
 		}
 		
 		else if(start[0] == getEnd(maze)[0] && start[1] == getEnd(maze)[1]) {
-			
-			path.add(start);
-			
+			return;
 		}
 		
 		else if(numOfOpenEdges(maze, start[0], start[1]) == 0 ){

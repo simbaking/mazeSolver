@@ -6,13 +6,16 @@ import java.awt.*;
 public class UI {
 
 	JFrame frame = new JFrame();
-	JPanel panel = new JPanel(new GridLayout(6, 7, 10, 10));
+	JPanel panel = new JPanel();
 	
 	public UI() {
 		
+		frame = new JFrame();
+		panel = new JPanel();
+		
 	}
 	
-public void show(int[][] mazePath) {
+	public void show(int[][] mazePath) {
     	
         panel.removeAll();
         panel.setLayout(new GridLayout(mazePath.length, mazePath[0].length));
